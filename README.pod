@@ -1,85 +1,12 @@
-use strictures 1;
+=pod
 
-# ABSTRACT: Provide class and role keywords for Moo
+=head1 NAME
 
-package Syntax::Feature::Moo;
+Syntax::Feature::Moo - Provide class and role keywords for Moo
 
-use Carp                            qw( croak );
-use Params::Classify        0.011   qw( is_ref );
-use Syntax::Feature::Module 0.001;
+=head1 VERSION
 
-use Moo 0.009005 ();
-
-use namespace::clean 0.18;
-
-$Carp::Internal{ +__PACKAGE__ }++;
-
-=method install
-
-    $class->install( %arguments );
-
-Used by L<syntax> to install this extension into a package.
-
-=cut
-
-sub install {
-    my ($class, %args) = @_;
-    my $target = $args{into};
-    my $outer  = $args{outer};
-
-    my $options = $args{options};
-    $options = { -inner => $options }
-        if is_ref $options, 'ARRAY';
-    $options = {}
-        unless defined $options;
-    croak qq{The options for $class have to be an array or hash ref}
-        unless is_ref $options, 'HASH';
-
-    my $inner = $options->{ -inner };
-    $inner = []
-        unless defined $inner;
-    croak qq{The -inner option for $class has to be an array ref}
-        unless is_ref $inner, 'ARRAY';
-
-    my $names = $options->{ -as };
-    $names = {}
-        unless defined $names;
-    croak qq{The -as option for $class has to be a hash ref}
-        unless is_ref $names, 'HASH';
-    my $role_name  = $names->{role}  || 'role';
-    my $class_name = $names->{class} || 'class';
-
-    my $preamble = $options->{ -preamble };
-    $preamble = []
-        unless defined $preamble;
-    croak qq{The -preamble option for $class has to be an array ref}
-        unless is_ref $preamble, 'ARRAY';
-
-    Syntax::Feature::Module->install(
-        into    => $target,
-        outer   => $outer,
-        options => {
-            -inner      => $inner,
-            -as         => $class_name,
-            -preamble   => ['use Moo', @$preamble],
-        },
-    );
-    Syntax::Feature::Module->install(
-        into    => $target,
-        outer   => $outer,
-        options => {
-            -inner      => $inner,
-            -as         => $role_name,
-            -preamble   => ['use Moo::Role', @$preamble],
-        },
-    );
-
-    return 1;
-}
-
-1;
-
-__END__
+version 0.001
 
 =head1 SYNOPSIS
 
@@ -104,6 +31,14 @@ __END__
 This syntax extension uses L<Syntax::Feature::Module> to provide a
 C<class> and a C<role> keyword that will automatically load L<Moo> and
 L<Moo::Role> respectively.
+
+=head1 METHODS
+
+=head2 install
+
+    $class->install( %arguments );
+
+Used by L<syntax> to install this extension into a package.
 
 =head1 SYNTAX
 
@@ -184,4 +119,19 @@ compiletime and reset it for a future manual cleanup pass.
 
 =back
 
-=cut
+=head1 BUGS
+
+Please report any bugs or feature requests to bug-syntax-feature-moo@rt.cpan.org or through the web interface at:
+ http://rt.cpan.org/Public/Dist/Display.html?Name=Syntax-Feature-Moo
+
+=head1 AUTHOR
+
+Robert 'phaylon' Sedlacek <rs@474.at>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Robert 'phaylon' Sedlacek.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
