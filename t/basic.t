@@ -1,8 +1,6 @@
 use strictures 1;
 use Test::More  0.96;
 use Test::Fatal 0.003;
-use FindBin     qw( $Bin );
-use lib "$Bin/lib";
 
 use syntax 'moo';
 

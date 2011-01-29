@@ -32,11 +32,14 @@ This syntax extension uses L<Syntax::Feature::Module> to provide a
 C<class> and a C<role> keyword that will automatically load L<Moo> and
 L<Moo::Role> respectively.
 
+The L<Syntax::Feature::Moo::Default> extension is a subclass of this
+module that will provide other common extensions automatically.
+
 =head1 METHODS
 
 =head2 install
 
-    $class->install( %arguments );
+    $class->install( %arguments )
 
 Used by L<syntax> to install this extension into a package.
 
@@ -112,6 +115,8 @@ compiletime and reset it for a future manual cleanup pass.
 =over
 
 =item * L<syntax>
+
+=item * L<Syntax::Feature::Moo::Default>
 
 =item * L<Syntax::Feature::Module>
 

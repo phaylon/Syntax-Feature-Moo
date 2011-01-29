@@ -4,11 +4,10 @@ use strictures 1;
 
 package Syntax::Feature::Moo;
 
-use Carp                            qw( croak );
-use Params::Classify        0.011   qw( is_ref );
-use Syntax::Feature::Module 0.001;
-
-use Moo 0.009005 ();
+use Syntax::Feature::Module 0.001       ();
+use Carp                                qw( croak );
+use Params::Classify        0.011       qw( is_ref );
+use Moo                     0.009005    ();
 
 use namespace::clean 0.18;
 
@@ -16,7 +15,7 @@ $Carp::Internal{ +__PACKAGE__ }++;
 
 =method install
 
-    $class->install( %arguments );
+    $class->install( %arguments )
 
 Used by L<syntax> to install this extension into a package.
 
@@ -24,58 +23,38 @@ Used by L<syntax> to install this extension into a package.
 
 sub install {
     my ($class, %args) = @_;
-    my $target = $args{into};
-    my $outer  = $args{outer};
-
-    my $options = $args{options};
-    $options = { -inner => $options }
-        if is_ref $options, 'ARRAY';
-    $options = {}
-        unless defined $options;
-    croak qq{The options for $class have to be an array or hash ref}
-        unless is_ref $options, 'HASH';
-
-    my $inner = $options->{ -inner };
-    $inner = []
-        unless defined $inner;
-    croak qq{The -inner option for $class has to be an array ref}
-        unless is_ref $inner, 'ARRAY';
-
-    my $names = $options->{ -as };
-    $names = {}
-        unless defined $names;
-    croak qq{The -as option for $class has to be a hash ref}
-        unless is_ref $names, 'HASH';
-    my $role_name  = $names->{role}  || 'role';
-    my $class_name = $names->{class} || 'class';
-
-    my $preamble = $options->{ -preamble };
-    $preamble = []
-        unless defined $preamble;
-    croak qq{The -preamble option for $class has to be an array ref}
-        unless is_ref $preamble, 'ARRAY';
-
-    Syntax::Feature::Module->install(
-        into    => $target,
-        outer   => $outer,
-        options => {
-            -inner      => $inner,
-            -as         => $class_name,
-            -preamble   => ['use Moo', @$preamble],
+    my $target  = $args{into};
+    my $outer   = $args{outer};
+    my $options = is_ref($args{options}, 'HASH')
+        ? $args{options}
+        : {};
+    Syntax::Feature::Module->install_multiple(
+        %args,
+        blocks => {
+            class => {
+                -inner      => [$class->_default_inner($options)],
+                -preamble   => [
+                    $class->_class_preamble($options),
+                    $class->_final_preamble($options),
+                ],
+            },
+            role => {
+                -inner      => [$class->_default_inner($options)],
+                -preamble   => [
+                    $class->_role_preamble($options),
+                    $class->_final_preamble($options),
+                ],
+            },
         },
     );
-    Syntax::Feature::Module->install(
-        into    => $target,
-        outer   => $outer,
-        options => {
-            -inner      => $inner,
-            -as         => $role_name,
-            -preamble   => ['use Moo::Role', @$preamble],
-        },
-    );
-
     return 1;
 }
+
+sub _default_inner   { () }
+sub _class_preamble  { $_[0]->_common_preamble($_[1]), 'use Moo' }
+sub _role_preamble   { $_[0]->_common_preamble($_[1]), 'use Moo::Role' }
+sub _common_preamble { () }
+sub _final_preamble  { () }
 
 1;
 
@@ -104,6 +83,9 @@ __END__
 This syntax extension uses L<Syntax::Feature::Module> to provide a
 C<class> and a C<role> keyword that will automatically load L<Moo> and
 L<Moo::Role> respectively.
+
+The L<Syntax::Feature::Moo::Default> extension is a subclass of this
+module that will provide other common extensions automatically.
 
 =head1 SYNTAX
 
@@ -177,6 +159,8 @@ compiletime and reset it for a future manual cleanup pass.
 =over
 
 =item * L<syntax>
+
+=item * L<Syntax::Feature::Moo::Default>
 
 =item * L<Syntax::Feature::Module>
 
