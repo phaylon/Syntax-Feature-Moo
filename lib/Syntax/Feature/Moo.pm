@@ -56,45 +56,12 @@ sub _role_preamble   { $_[0]->_common_preamble($_[1]), 'use Moo::Role' }
 sub _common_preamble { () }
 sub _final_preamble  { () }
 
+
 1;
 
 __END__
 
-=head1 SYNOPSIS
-
-    use syntax qw( moo );
-
-    role Named {
-        has name => (is => 'ro');
-    };
-
-    class Point 1.23 {
-        has x => (is => 'ro');
-        has y => (is => 'ro');
-        with 'Named';
-        sub coord {
-            my ($self) = @_;
-            return sprintf '(%s,%s)', $self->x, $self->y;
-        }
-    };
-
-=head1 DESCRIPTION
-
-This syntax extension uses L<Syntax::Feature::Module> to provide a
-C<class> and a C<role> keyword that will automatically load L<Moo> and
-L<Moo::Role> respectively.
-
-The L<Syntax::Feature::Moo::Default> extension is a subclass of this
-module that will provide other common extensions automatically.
-
-=head1 SYNTAX
-
-The L<Syntax::Feature::Module/SYNTAX> is valid for the C<role> and C<class>
-keywords as well.
-
-=head1 OPTIONS
-
-=head2 -as
+=option -as
 
     use syntax moo => { -as => { role => 'trait', class => 'moo' } };
 
@@ -105,7 +72,7 @@ keywords as well.
 This option needs to be a hash reference. You can set the values for
 C<class> or C<role> to supply your own names for role and class blocks.
 
-=head2 -inner
+=option -inner
 
     use syntax moo => { -inner => [qw( method )] };
 
@@ -138,7 +105,7 @@ This has the same effect as the code above. These examples are using
 L<Syntax::Feature::Method> to provide a C<method> keyword inside the
 blocks.
 
-=head2 -preamble
+=option -preamble
 
     use syntax moo => { -preamble => [
         'use namespace::clean',
@@ -153,6 +120,39 @@ The C<-preamble> is an array reference of strings that will be inserted
 into the namespaced block after L<Moo> or L<Moo::Role> were invoked. The
 above example would use L<namespace::clean> to clean up the namespace after
 compiletime and reset it for a future manual cleanup pass.
+
+
+=head1 SYNOPSIS
+
+    use syntax qw( moo );
+
+    role Named {
+        has name => (is => 'ro');
+    };
+
+    class Point 1.23 {
+        has x => (is => 'ro');
+        has y => (is => 'ro');
+        with 'Named';
+        sub coord {
+            my ($self) = @_;
+            return sprintf '(%s,%s)', $self->x, $self->y;
+        }
+    };
+
+=head1 DESCRIPTION
+
+This syntax extension uses L<Syntax::Feature::Module> to provide a
+C<class> and a C<role> keyword that will automatically load L<Moo> and
+L<Moo::Role> respectively.
+
+The L<Syntax::Feature::Moo::Default> extension is a subclass of this
+module that will provide other common extensions automatically.
+
+=head1 SYNTAX
+
+The L<Syntax::Feature::Module/SYNTAX> is valid for the C<role> and C<class>
+keywords as well.
 
 =head1 SEE ALSO
 

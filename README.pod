@@ -35,14 +35,6 @@ L<Moo::Role> respectively.
 The L<Syntax::Feature::Moo::Default> extension is a subclass of this
 module that will provide other common extensions automatically.
 
-=head1 METHODS
-
-=head2 install
-
-    $class->install( %arguments )
-
-Used by L<syntax> to install this extension into a package.
-
 =head1 SYNTAX
 
 The L<Syntax::Feature::Module/SYNTAX> is valid for the C<role> and C<class>
@@ -109,6 +101,14 @@ The C<-preamble> is an array reference of strings that will be inserted
 into the namespaced block after L<Moo> or L<Moo::Role> were invoked. The
 above example would use L<namespace::clean> to clean up the namespace after
 compiletime and reset it for a future manual cleanup pass.
+
+=head1 METHODS
+
+=head2 install
+
+    $class->install( %arguments )
+
+Used by L<syntax> to install this extension into a package.
 
 =head1 SEE ALSO
 
