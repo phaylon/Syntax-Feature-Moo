@@ -64,4 +64,15 @@ do {
     ::is __PACKAGE__->foo, 23, 'implicit package name';
 };
 
+
+my $cleaned = class Foo::Cleaned {
+    use Scalar::Util qw( blessed );
+    use namespace::clean;
+    sub check { blessed shift }
+};
+
+is $cleaned->new->check, 'Foo::Cleaned', 'import use';
+ok not($cleaned->can('blessed')), 'no blessed method';
+ok not($cleaned->can('has')), 'no has method';
+
 done_testing;
