@@ -55,4 +55,13 @@ do {
     ::is $inv->bar(23), 46, 'renamed invocant';
 };
 
+do {
+    package TestImplicit;
+    use syntax 'moo/default';
+    class 2.34 {
+        method foo { 23 }
+    };
+    ::is __PACKAGE__->foo, 23, 'implicit package name';
+};
+
 done_testing;
